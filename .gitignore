@@ -1,2 +1,3 @@
 *.csv
 *.pdf
+notebook/.ipynb_checkpoints/*
