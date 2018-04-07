@@ -80,7 +80,7 @@ function update(source) {
   // Compute the new tree layout.
   var nodes = tree.nodes(root).reverse(),
       links = tree.links(nodes);
-
+      console.log(links)
   // Normalize for fixed-depth.
   nodes.forEach(function(d) { d.y = d.depth * 180; });
 
@@ -92,8 +92,8 @@ function update(source) {
   var nodeEnter = node.enter().append("g")
       .attr("class", "node")
       .attr("transform", function(d) {
-        console.log(d);
-        return "translate(" + source.y0 + "," + (source.x0-d.size/samplenum*200) + ")"; })
+        //console.log(d);
+        return "translate(" + source.y0 + "," + source.x0 + ")"; })
       .on("click", click);
 
   nodeEnter.append("rect")
@@ -115,7 +115,7 @@ function update(source) {
   // Transition nodes to their new position.
   var nodeUpdate = node.transition()
       .duration(duration)
-      .attr("transform", function(d) { return "translate(" + d.y + "," + (d.x-d.size/samplenum*100) + ")"; });
+      .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
 
   nodeUpdate.select("rect")
     .attr("height", function(d){return d.size/samplenum*200;})
@@ -130,7 +130,7 @@ function update(source) {
   // Transition exiting nodes to the parent's new position.
   var nodeExit = node.exit().transition()
       .duration(duration)
-      .attr("transform", function(d) { return "translate(" + source.y + "," + (source.x-d.size/samplenum*100) + ")"; })
+      .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
       .remove();
 
   nodeExit.select("rect")
@@ -150,10 +150,18 @@ function update(source) {
   // Enter any new links at the parent's previous position.
   link.enter().insert("path", "g")
       .attr("class", "link")
+//      .attr("y1", function(d) { return d.source.y0; })
+//      .attr("x1", function(d) {
+//        if(d.source.x0>d.target.x0) {return d.source.x0} else {return d.source.x0-(d.source.size - d.target.size)/samplenum*200}; })
+//      .attr("x2", function(d) { return d.target.y0; })
+//      .attr("y2", function(d) { return d.target.x0; })
       .attr("d", function(d) {
-
-        var o = {x: source.x0, y: source.y0};
-        return diagonal({source: o, target: o});
+        if(d.source.x0>d.target.x0)
+        {return diagnal(source:{x: source.x0, y: source.y0}, target:{x: source.x0, y: source.y0}) }
+        else
+        {return diagnal(source:{x:d.source.x0-(d.source.size - d.target.size)/samplenum*200, y:y0}, target:{x:d.source.x0-(d.source.size - d.target.size)/samplenum*200, y:y0})};
+//        var o = {x: source.x0, y: source.y0};
+//        return diagonal({source: o, target: o});
       })
       .style("stroke-width", function(d) {
         //console.log(d.target);
@@ -168,10 +176,15 @@ function update(source) {
   // Transition exiting nodes to the parent's new position.
   link.exit().transition()
       .duration(duration)
-      .attr("d", function(d) {
-        var o = {x: source.x, y: source.y};
-        return diagonal({source: o, target: o});
-      })
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x1", function(d) {
+        if(d.source.x0>d.target.x0) {return d.source.x} else {return d.source.x-(d.source.size - d.target.size)/samplenum*200}; })
+      .attr("x2", function(d) { return d.target.y; })
+      .attr("y2", function(d) { return d.target.x; })
+//      .attr("d", function(d) {
+//        var o = {x: source.x, y: source.y};
+//        return diagonal({source: o, target: o});
+//      })
       .remove();
 
   // Stash the old positions for transition.
