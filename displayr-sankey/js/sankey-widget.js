@@ -133,7 +133,6 @@ HTMLWidgets.widget({
         visit(treeData, function (d) {
             totalNodes++;
             maxLabelLength = opts.maxLabelLength || Math.max(d[opts.name].length, maxLabelLength);
-            //console.log(d[opts.name]);
             meanLabelLength = meanLabelLength + d[opts.name].length;
 
         }, function (d) {
@@ -230,7 +229,7 @@ HTMLWidgets.widget({
 
 
         zoomIn.on("click", function () {
-            //console.log(this.x);
+            console.log(this.x);
             zoomfactor = zoomfactor + 0.2;
             zoomListener.scale(zoomfactor).event(d3.select(baseSvg));
         });
@@ -487,18 +486,14 @@ HTMLWidgets.widget({
                     return -wscale(d.value) / 2
                 })
                 .attr("height", function (d) {
-                  //console.log(d);
-                  //console.log(d.parent.children[0].value);
-                  //console.log(d.parent.children[1].value);
                     return wscale(d.value)
                 })
-                .attr("width", 10)
-                .style("fill", function(d){return d.color})
+                .attr("width", 5)
+                .style("fill", "white")
                 .style("stroke", "white")
-                .style("pointer-events", "all");
-
-                //.on('mouseover', opts.tooltip ? tip.show : null)
-                //.on('mouseout', opts.tooltip ? tip.hide : null);
+                .style("pointer-events", "all")
+                .on('mouseover', opts.tooltip ? tip.show : null)
+                .on('mouseout', opts.tooltip ? tip.hide : null);
 
             nodeEnter.append("text")
                 .attr("x", function (d) {
